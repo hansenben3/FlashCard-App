@@ -7,7 +7,7 @@ function EditDeck({deckId}) {
   const [error, setError] = useState(undefined);
   const history = useHistory();
 
-  useEffect( () => {
+  useEffect( (deckId) => {
     const abortController = new AbortController();
     readDeck(deckId, abortController.signal).then(setDeck).catch(setError);
     return () => abortController.abort();

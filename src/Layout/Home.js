@@ -35,7 +35,7 @@ function Home() {
 
   const deckList = decks.map((deck) => {
     return (
-    <div className="deck border">
+    <div className="deck border" key={deck.id}>
       <HomeDeck deck = {deck} getDeck = {getDeck}/>
     </div>
     )

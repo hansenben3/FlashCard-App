@@ -1,10 +1,9 @@
-import React, {useState} from "react";
+import React from "react";
 import {createDeck} from "../utils/api/index";
 import {useHistory} from "react-router-dom";
 
 function CreateDeck() {
   const history = useHistory();
-  const [error, setError] = useState(undefined);
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -16,7 +15,7 @@ function CreateDeck() {
       "name" : name,
       "description" : description
     };
-    createDeck(deck, abortController.signal).then(history.push("/")).catch(setError);
+    createDeck(deck, abortController.signal).then(history.push("/"));
     return () => abortController.abort();
   }
 

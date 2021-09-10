@@ -9,7 +9,7 @@ function EditCard() {
   const history = useHistory();
   const {cardId} = useParams();
 
-  useEffect(() => {
+  useEffect((cardId) => {
     const abortController = new AbortController();
     readCard(cardId, abortController.signal).then(setCard).catch(setError);
     return () => abortController.abort();

@@ -22,7 +22,7 @@ const trash = (event) => {
     return () => abortController.abort();
 }
 
-useEffect(() => {
+useEffect((deckId) => {
     const abortController = new AbortController();
 
     readDeck(deckId, abortController.signal).then(setDeck).catch(setError);

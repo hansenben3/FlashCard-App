@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {useHistory, Link} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {readDeck, createCard} from "../utils/api";
 
 function AddCard({deckId}) {
@@ -7,9 +7,8 @@ function AddCard({deckId}) {
   const [cards, setCards] = useState(undefined);
   const [deck, setDeck] = useState(undefined);
   const [error, setError] = useState(undefined);
-  const history = useHistory();
 
-  useEffect( () => {
+  useEffect( (deckId) => {
     const abortController = new AbortController();
     readDeck(deckId, abortController.signal).then(setDeck).catch(setError);
     fetch("http://localhost:5000/cards").then(setCards).catch(setError);
