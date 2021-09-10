@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
-import {useRouteMatch, useParams, Link, Switch, Route} from "react-router-dom";
-import {readDeck, listCards} from "../utils/api/index";
+import {useRouteMatch, useParams, Link, Switch, Route, useHistory} from "react-router-dom";
+import {readDeck, listCards, deleteDeck} from "../utils/api/index";
 import AddCard from "./AddCard";
 import Cards from "./Cards";
 import EditCard from "./EditCard";
@@ -10,12 +10,16 @@ import Navbar from "./Navbar";
 
 function Deck () {
 const {url} = useRouteMatch();
-const{deckId} = useParams();
+const {deckId} = useParams();
+const history = useHistory();
 const [deck, setDeck] = useState(undefined);
 const [cards, setCards] = useState(undefined);
 const [error, setError] = useState(undefined);
-const trash = () => {
-    
+const trash = (event) => {
+    window.confirm("Are you sure you want to delete this deck?");
+    const abortController = new AbortController();
+    deleteDeck(deckId, abortController.signal).then(history.push("/")).catch(setError);
+    return () => abortController.abort();
 }
 
 useEffect(() => {
@@ -37,15 +41,15 @@ useEffect(() => {
 
 if(deck !== undefined){
    return (
-    <div>
+    <div className="container text-black">
         <Switch>
             <Route path = {url + "/cards/:cardId/edit"}>
                 <Navbar deck = {deck} location = "Edit Card"/>
                 <EditCard/>
             </Route>
             <Route path = {url + "/cards/new"}>
-                <Navbar deck = {deck} location = "Card/New"/>   
-                <AddCard deck={deck}/>
+                <Navbar deck = {deck} location = "Add Card"/>   
+                <AddCard deckId={deckId}/>
             </Route>
             <Route path = {url + "/study"}>
                 <Navbar deck = {deck} location = "Study"/>
@@ -57,11 +61,10 @@ if(deck !== undefined){
             </Route>
             <Route exact path={url}>
                 <Navbar deck = {deck}/>
-                <h3>
+                <h3 className="title">
                     {deck.name}
                 </h3>
                 <p>
-                    {deck.name}
                     {deck.description}
                 </p>
                 <div>

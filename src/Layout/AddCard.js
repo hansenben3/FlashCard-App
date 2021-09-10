@@ -1,23 +1,53 @@
-import React from "react";
-import {useHistory} from "react-router-dom";
-import {createCard} from "../utils/api";
+import React, {useState, useEffect} from "react";
+import {useHistory, Link} from "react-router-dom";
+import {readDeck, createCard} from "../utils/api";
 
-function AddCard({deck}) {
+function AddCard({deckId}) {
 
+  const [cards, setCards] = useState(undefined);
+  const [deck, setDeck] = useState(undefined);
+  const [error, setError] = useState(undefined);
   const history = useHistory();
+
+  useEffect( () => {
+    const abortController = new AbortController();
+    readDeck(deckId, abortController.signal).then(setDeck).catch(setError);
+    fetch("http://localhost:5000/cards").then(setCards).catch(setError);
+    return () => abortController.abort();
+  }, [])
+
+  if(error){
+    return(
+      <div>
+        Error fetching data...
+      <textarea id="front" placeholder="Front side of card">
+      </textarea>
+      <textarea id="back" placeholder="Back side of card">
+      </textarea>
+      </div>
+    )
+  }
+
+  if(deck){
 
   const submitHandler = (event) => {
     event.preventDefault();
+    const abortController = new AbortController();
     const front = event.target.querySelector("#front");
     const back = event.target.querySelector("#back");
-    const id = 1;
-    const deckId = 1;
+    const id = cards.length += 1;
     const card = {
       "id" : id,
       "front" : front.value,
       "back" : back.value,
       "deckId" : deckId,
     };
+    createCard(deckId, card, abortController.signal).then(Clear(event.target));
+  }
+
+  function Clear (target) {
+    target.querySelector("#front").value = "";
+    target.querySelector("#back").value = "";
   }
 
   return (
@@ -39,11 +69,9 @@ function AddCard({deck}) {
             <textarea id="back" placeholder="Back side of card">
             </textarea>
             <br></br>
-            <button onClick={() => {
-              history.push("/decks/" + deck.id);
-            }}>
+            <Link to={"/decks/" + deckId}>
               Done
-            </button>
+            </Link>
             <button type="submit">
               Add Card
             </button>
@@ -51,6 +79,18 @@ function AddCard({deck}) {
         </div>
       </div>
   );
+}
+else{
+  return ( 
+    <div>
+      Error displaying data...
+      <textarea id="front" placeholder="Front side of card">
+      </textarea>
+      <textarea id="back" placeholder="Back side of card">
+      </textarea>
+    </div>
+  )
+}
 }
 
 export default AddCard;

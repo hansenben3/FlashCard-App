@@ -1,5 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
+import {deleteDeck} from "../utils/api/index";
 
 function HomeDeck ({deck, getDeck}) {
 
@@ -15,8 +16,11 @@ function HomeDeck ({deck, getDeck}) {
         history.push("/decks/" + deck.id + "/study");
     }
 
-    const deleteDeck = (event) => {
-        console.log(getDeck(event.target.parentNode.querySelector("h2").innerText));
+    const trash = (event) => {
+        window.confirm("Are you sure you want to delete this deck?");
+        const abortController = new AbortController();
+        deleteDeck(deck.id, abortController.signal);
+        return () => abortController.abort();
     }
 
     return (
@@ -35,7 +39,7 @@ function HomeDeck ({deck, getDeck}) {
         <button onClick={studyDeck}>
             Study
         </button>
-        <button onClick={deleteDeck}>
+        <button onClick={trash}>
             Trash
         </button>
       </div>

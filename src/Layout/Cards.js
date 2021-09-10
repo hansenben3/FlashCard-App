@@ -100,7 +100,7 @@ function Cards ({cards, type}) {
                             const abortController = new AbortController();
                             const id = event.target.parentNode.id;
 
-                            deleteCard(abortController.signal, id);
+                            deleteCard(id, abortController.signal);
 
                             return () => abortController.abort();
                         }

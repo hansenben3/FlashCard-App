@@ -35,14 +35,24 @@ function EditCard() {
       event.preventDefault();
       const front = event.target.querySelector("#front");
       const back = event.target.querySelector("#back");
-      const card = {
+      const newCard = {
         "id" : cardId,
         "front" : front.value,
         "back" : back.value,
         "deckId" : card.deckId,
       }
       const abortController = new AbortController();
-      updateCard(card, abortController.signal)
+      updateCard(newCard, abortController.signal).catch(setError);
+      return () => abortController.abort();
+    }
+
+    const handleChange = (event) => {
+      const { id, value } = event.target;
+      setCard(prevState => ({
+        ...prevState,
+        [id] : value
+      }))
+
     }
 
   return (
@@ -53,14 +63,14 @@ function EditCard() {
             Front:
           </label>
           <br></br>
-          <textarea id="front" value={card.front}>
+          <textarea id="front" value={card.front} onChange={handleChange}>
           </textarea>
           <br></br>
           <label>
             Back:
           </label>
           <br></br>
-          <textarea id="back" value={card.back}>
+          <textarea id="back" value={card.back} onChange={handleChange}>
           </textarea>
             <button onClick={() => {
               history.push("/decks/" + card.deckId);
